@@ -7,6 +7,9 @@
   <%= csrf_meta_tags %>
 </head>
 <body class='<%= controller.controller_name %>'>
+  <% if  session[:counter] > 5%>
+      Total Site Visit Count: <%= pluralize(session[:counter], "") %>
+  <% end %>
   <div id="banner">
       <%= image_tag("logo.png")%>
       <%= @page_title || "Pragmatic Bookshelf" %>
@@ -19,8 +22,8 @@
             <li><a href="http://www..../faq">Questions</a></li>
             <li><a href="http://www..../news">News</a></li>
             <li><a href="http://www..../contact">Contact</a></li>
+            <li>Date: <%= date_today %></li>
         </ul>
-        <span><%= date_today %></span>
     </div>
 
     <div id="main">
