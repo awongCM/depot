@@ -4,7 +4,7 @@ class Product < ActiveRecord::Base
 
     before_destroy :ensure_not_referenced_by_any_item
 
-    validates :title, :description, :image_url, presence: true
+    validates :title, :description, :image_url, :locale, presence: true
     validates :price, numericality: {greater_than_or_equal_to: 0.01}
     validates :title, uniqueness: true
     validates :title, length: {minimum: 10, too_short: "is too short.  It must contain at least 10 characters"}
@@ -15,6 +15,10 @@ class Product < ActiveRecord::Base
 
     def self.latest
         Product.order(:updated_at).last
+    end
+
+    def self.find_products_by_locale
+        Product.where(:locale=>I18n.locale).order(:title)
     end
 
     private

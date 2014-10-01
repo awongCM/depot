@@ -11,4 +11,10 @@ module ApplicationHelper
       content_tag("div", attributes, &block)
     end
 
+    #Currency Conversion Helper method
+    def currency_to_locale(price)
+        price = price * 1.3 if 'es' == I18n.locale.to_s
+        number_to_currency(price, precision: 2)
+    end
+
 end
