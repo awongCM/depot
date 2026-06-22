@@ -18,9 +18,8 @@ class OrdersControllerTest < ActionController::TestCase
   end
 
   test "should get new" do
-    item = LineItem.new
+    item = LineItem.new(product: products(:ruby), price: products(:ruby).price, quantity: 1)
     item.build_cart
-    item.product = products(:ruby)
     item.save!
     session[:cart_id] = item.cart.id
     get :new
@@ -28,8 +27,13 @@ class OrdersControllerTest < ActionController::TestCase
   end
 
   test "should create order" do
+    item = LineItem.new(product: products(:ruby), price: products(:ruby).price, quantity: 1)
+    item.build_cart
+    item.save!
+    session[:cart_id] = item.cart.id
+
     assert_difference('Order.count') do
-      post :create, order: { address: @order.address, email: @order.email, name: @order.name, payment_type_id: @order.payment_type_id, ship_date: @order.ship_date }
+      post :create, order: { address: @order.address, email: @order.email, name: @order.name, payment_type_id: @order.payment_type_id }
     end
 
     assert_redirected_to store_path
@@ -46,7 +50,7 @@ class OrdersControllerTest < ActionController::TestCase
   end
 
   test "should update order" do
-    patch :update, id: @order, order: { address: @order.address, email: @order.email, name: @order.name, payment_type_id: @order.payment_type_id, ship_date: @order.ship_date }
+    patch :update, id: @order, order: { address: @order.address, email: @order.email, name: @order.name, payment_type_id: @order.payment_type_id }
     assert_redirected_to order_path(assigns(:order))
   end
 

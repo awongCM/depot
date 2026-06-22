@@ -4,12 +4,12 @@ one:
   name: Dave Thomas
   address: MyText
   email: dave@example.org
-  payment_type_id: 1
+  payment_type: one
   ship_date: 2014-07-27 00:00:00
 
 two:
   name: MyString
   address: MyText
   email: MyString
-  payment_type_id: 2
+  payment_type: two
   ship_date: 1900-01-01 00:00:00

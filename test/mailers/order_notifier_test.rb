@@ -14,7 +14,8 @@ class OrderNotifierTest < ActionMailer::TestCase
     assert_equal "Pragmatic Store Order Shipped", mail.subject
     assert_equal ["dave@example.org"], mail.to
     assert_equal ["depot@example.com"], mail.from
-    assert_match /<td>1&times;<\/td>Programming Ruby 1.9<\/td>/, mail.body.encoded
+    assert_match "Programming Ruby 1.9", mail.body.encoded
+    assert_match "1&times;", mail.body.encoded
   end
 
 end

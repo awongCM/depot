@@ -1,7 +1,7 @@
 class LineItemsController < ApplicationController
   include CurrentCart
   skip_before_action :authorize, only: :create
-  before_action :set_cart, :reset_session, only: [:create, :decrement]
+  before_action :set_cart, :reset_visit_counter, only: [:create, :decrement]
   before_action :set_line_item, only: [:show, :edit, :update, :destroy, :decrement]
 
   # GET /line_items
@@ -63,7 +63,7 @@ class LineItemsController < ApplicationController
     @line_item.destroy
 
     respond_to do |format|
-      format.html { redirect_to cart_path(session[:cart_id]), notice: 'Line item was successfully destroyed.' }
+      format.html { redirect_to(session[:cart_id] ? cart_path(session[:cart_id]) : store_url, notice: 'Line item was successfully destroyed.') }
       format.json { head :no_content }
     end
   end
@@ -85,7 +85,7 @@ class LineItemsController < ApplicationController
       @line_item = LineItem.find(params[:id])
     end
 
-    def reset_session
+    def reset_visit_counter
       session[:counter] = 0
     end
 

@@ -32,7 +32,7 @@ class OrdersController < ApplicationController
   # POST /orders
   # POST /orders.json
   def create
-    @order = Order.new(order_params)
+    @order = Order.new(order_create_params)
     @order.add_line_items_from_cart(@cart)
 
     respond_to do |format|
@@ -55,7 +55,7 @@ class OrdersController < ApplicationController
     @order = Order.find(params[:id])
 
      respond_to do |format|
-      if @order.update_attributes(params[:order])
+      if @order.update_attributes(order_update_params)
         OrderNotifier.shipped(@order).deliver unless @order.ship_date.nil?
         format.html { redirect_to @order, notice: 'Order was successfully updated.' }
         format.json { render :show, status: :ok, location: @order }
@@ -83,7 +83,11 @@ class OrdersController < ApplicationController
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
-    def order_params
+    def order_create_params
       params.require(:order).permit(:name, :address, :email, :payment_type_id)
+    end
+
+    def order_update_params
+      params.require(:order).permit(:name, :address, :email, :payment_type_id, :ship_date)
     end
 end

@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+# json 1.8.1 (pulled in by Rails 4.1) does not compile on modern GCC.
+gem 'json', '~> 1.8.6'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.1.1'
@@ -33,8 +35,13 @@ gem 'spring',        group: :development
 
 gem 'pry-byebug',  group: :development
 
+group :development, :test do
+  gem 'brakeman', require: false
+  gem 'bundler-audit', require: false
+end
+
 # Use ActiveModel has_secure_password
-gem 'bcrypt', '~> 3.1.7'
+gem 'bcrypt', '~> 3.1.12'
 
 # Use unicorn as the app server
 # gem 'unicorn'
