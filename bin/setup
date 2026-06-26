@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# Shared setup for Ruby, gems, and database.
+#
+# Local development:  bin/setup
+# Cloud Agent only:   .cloud-agent/setup.sh  (see .cloud-agent/README.md)
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -7,30 +11,6 @@ RUBY_VERSION="$(cat .ruby-version | tr -d '[:space:]')"
 BUNDLER_VERSION="1.17.3"
 
 echo "==> Depot setup (Ruby ${RUBY_VERSION})"
-
-install_linux_packages() {
-  if [[ "$(uname -s)" != "Linux" ]]; then
-    return 0
-  fi
-  if ! command -v apt-get >/dev/null 2>&1; then
-    return 0
-  fi
-  echo "==> Installing Linux build dependencies..."
-  sudo apt-get update -qq
-  sudo apt-get install -y -qq \
-    build-essential curl git \
-    libsqlite3-dev libssl-dev libreadline-dev zlib1g-dev libyaml-dev
-}
-
-ensure_rbenv() {
-  if command -v rbenv >/dev/null 2>&1; then
-    return 0
-  fi
-  echo "==> Installing rbenv..."
-  curl -fsSL https://github.com/rbenv/rbenv-installer/raw/main/bin/rbenv-installer | bash
-  export PATH="$HOME/.rbenv/bin:$PATH"
-  eval "$(rbenv init - bash)"
-}
 
 activate_ruby() {
   export PATH="$HOME/.rbenv/bin:$HOME/.rbenv/shims:$PATH"
@@ -73,11 +53,13 @@ install_ruby() {
   cat <<EOF
 ERROR: Ruby ${RUBY_VERSION} is required but neither rbenv nor RVM is available.
 
-Install one of:
-  - rbenv: https://github.com/rbenv/rbenv#installation
-  - RVM:   https://rvm.io/rvm/install
+Local development:
+  Install rbenv or RVM, then re-run bin/setup
 
-Then re-run: bin/setup
+Cloud Agent:
+  Run .cloud-agent/setup.sh instead (bootstraps rbenv automatically)
+
+  See .cloud-agent/README.md
 EOF
   exit 1
 }
@@ -102,8 +84,6 @@ setup_database() {
   bundle exec rake db:setup
 }
 
-install_linux_packages
-ensure_rbenv
 install_ruby
 install_bundler
 install_gems
@@ -114,6 +94,8 @@ echo "Setup complete."
 echo ""
 echo "Run tests:  bin/setup test"
 echo "Run server: bin/setup server"
+echo ""
+echo "Cloud Agent: use .cloud-agent/setup.sh at the start of each session."
 echo ""
 echo "Or manually:"
 echo "  export PATH=\"\$HOME/.rbenv/bin:\$HOME/.rbenv/shims:\$PATH\""
