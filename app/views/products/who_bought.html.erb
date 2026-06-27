@@ -19,5 +19,5 @@
       <th><%= number_to_currency order.line_items.map(&:total_price).sum %></th>
     </tr>
   </table>
-  <p>Paid by <%= order.pay_type %>
+  <p>Paid by <%= order.payment_type.name %>
 <% end %>

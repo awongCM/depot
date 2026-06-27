@@ -9,7 +9,8 @@ class ProductsControllerTest < ActionController::TestCase
         title: 'Lorem Ipsum',
         description: 'Wibbles are fun!',
         image_url: 'lorem.jpg',
-        price: 19.95
+        price: 19.95,
+        locale: 'en'
     }
   end
 
@@ -61,7 +62,8 @@ class ProductsControllerTest < ActionController::TestCase
     product = Product.new(title: products(:ruby).title,
       description: "yyy",
       price: 1,
-      image_url: "fred.gif")
+      image_url: "fred.gif",
+      locale: "en")
     assert product.invalid?
     assert_equal ["has already been taken"], product.errors[:title]
   end
@@ -70,7 +72,8 @@ class ProductsControllerTest < ActionController::TestCase
     product = Product.new(title: products(:ruby).title,
       description: "yyy",
       price: 1,
-      image_url: "fred.gif")
+      image_url: "fred.gif",
+      locale: "en")
     assert product.invalid?
     assert_equal [I18n.translate('errors.messages.taken')],
     product.errors[:title]

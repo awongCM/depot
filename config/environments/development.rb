@@ -38,12 +38,12 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :smtp
 
   config.action_mailer.smtp_settings = {
-      address: "smtp.gmail.com",
-      port: 587,
-      domain: "domain.of.sender.net",
-      authentication: "plain",
-      user_name: "awong.cm@gmail.com",
-      password: "businessplan101",
+      address: ENV.fetch("SMTP_ADDRESS", "smtp.gmail.com"),
+      port: ENV.fetch("SMTP_PORT", 587).to_i,
+      domain: ENV.fetch("SMTP_DOMAIN", "example.com"),
+      authentication: ENV.fetch("SMTP_AUTHENTICATION", "plain"),
+      user_name: ENV["SMTP_USERNAME"],
+      password: ENV["SMTP_PASSWORD"],
       enable_starttls_auto: true
   }
 

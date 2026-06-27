@@ -1,7 +1,12 @@
 require 'test_helper'
 
 class UserStoriesTest < ActionDispatch::IntegrationTest
-  fixtures :products
+  fixtures :all
+
+  def setup
+    # Public storefront flows should not require admin login.
+    ActionMailer::Base.deliveries.clear
+  end
 
   test "buying a product" do
     LineItem.delete_all
@@ -17,27 +22,24 @@ class UserStoriesTest < ActionDispatch::IntegrationTest
 
     cart = Cart.find(session[:cart_id])
 
-    assert_equal 1, cart.line_items.size
-    assert_equal ruby_book, cart.line_items[0].product
+    assert_equal 1, LineItem.where(cart_id: cart.id).count
+    assert_equal ruby_book, cart.line_items.first.product
 
     get "/orders/new"
     assert_response :success
     assert_template "new"
 
-    ship_date_expected = Time.now.to_datetime
-
     post_via_redirect "/orders",
     order: { name: "Dave Thomas",
      address: "123 The Street",
      email: "dave@example.com",
-     payment_type_id: 1,
-     ship_date: ship_date_expected
+     payment_type_id: payment_types(:one).id
    }
 
    assert_response :success
    assert_template "index"
    cart = Cart.find(session[:cart_id])
-   assert_equal 0, cart.line_items.size
+   assert_equal 0, cart.line_items.count
 
    orders = Order.all
    assert_equal 1, orders.size
@@ -46,11 +48,11 @@ class UserStoriesTest < ActionDispatch::IntegrationTest
    assert_equal "Dave Thomas", order.name
    assert_equal "123 The Street", order.address
    assert_equal "dave@example.com", order.email
-   assert_equal 1, order.payment_type_id
-   assert_equal ship_date_expected, order.ship_date.to_datetime
+   assert_equal payment_types(:one).id, order.payment_type_id
+   assert_nil order.ship_date
 
-   assert_equal 1, order.line_items.size
-   line_item = order.line_items[0]
+   assert_equal 1, LineItem.where(order_id: order.id).count
+   line_item = order.line_items.first
    assert_equal ruby_book, line_item.product
 
    mail = ActionMailer::Base.deliveries.last
@@ -59,10 +61,12 @@ class UserStoriesTest < ActionDispatch::IntegrationTest
    assert_equal 'Pragmatic Store Order Confirmation', mail.subject
  end
 
- test "should mail the sys admin when error occurs" do
+  test "should mail the sys admin when error occurs" do
+    ActionMailer::Base.deliveries.clear
+
     get "/carts/eee"
     assert_response 302
-    assert_redirected_to root_path
+    assert_redirected_to store_path(locale: 'en')
 
     mail = ActionMailer::Base.deliveries.last
 

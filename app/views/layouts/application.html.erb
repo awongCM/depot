@@ -7,7 +7,7 @@
   <%= csrf_meta_tags %>
 </head>
 <body class='<%= controller.controller_name %>'>
-  <% if  session[:counter] > 5%>
+  <% if (session[:counter] || 0) > 5 %>
       Total Site Visit Count: <%= pluralize(session[:counter], "") %>
   <% end %>
   <div id="banner">

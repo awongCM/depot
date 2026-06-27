@@ -1,0 +1,112 @@
+#!/usr/bin/env bash
+# Shared setup for Ruby, gems, and database.
+#
+# Local development:  bin/setup
+# Cloud Agent only:   .cloud-agent/setup.sh  (see .cloud-agent/README.md)
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+RUBY_VERSION="$(cat .ruby-version | tr -d '[:space:]')"
+BUNDLER_VERSION="1.17.3"
+
+echo "==> Depot setup (Ruby ${RUBY_VERSION})"
+
+activate_ruby() {
+  export PATH="$HOME/.rbenv/bin:$HOME/.rbenv/shims:$PATH"
+  if command -v rbenv >/dev/null 2>&1; then
+    eval "$(rbenv init - bash)"
+  fi
+
+  if command -v rvm >/dev/null 2>&1; then
+    # shellcheck disable=SC1090
+    source "$HOME/.rvm/scripts/rvm" 2>/dev/null || true
+  fi
+}
+
+install_ruby() {
+  activate_ruby
+
+  if ruby --version 2>/dev/null | grep -q "${RUBY_VERSION}"; then
+    echo "==> Ruby ${RUBY_VERSION} already active"
+    return 0
+  fi
+
+  if command -v rbenv >/dev/null 2>&1; then
+    if ! rbenv versions --bare | grep -qx "${RUBY_VERSION}"; then
+      echo "==> Installing Ruby ${RUBY_VERSION} via rbenv (this may take a few minutes)..."
+      rbenv install "${RUBY_VERSION}"
+    fi
+    rbenv local "${RUBY_VERSION}"
+    rbenv rehash
+    activate_ruby
+    return 0
+  fi
+
+  if command -v rvm >/dev/null 2>&1; then
+    echo "==> Installing Ruby ${RUBY_VERSION} via RVM..."
+    rvm install "${RUBY_VERSION}"
+    rvm use "${RUBY_VERSION}" --default
+    return 0
+  fi
+
+  cat <<EOF
+ERROR: Ruby ${RUBY_VERSION} is required but neither rbenv nor RVM is available.
+
+Local development:
+  Install rbenv or RVM, then re-run bin/setup
+
+Cloud Agent:
+  Run .cloud-agent/setup.sh instead (bootstraps rbenv automatically)
+
+  See .cloud-agent/README.md
+EOF
+  exit 1
+}
+
+install_bundler() {
+  activate_ruby
+  if ! gem list bundler -i -v "${BUNDLER_VERSION}" >/dev/null 2>&1; then
+    echo "==> Installing Bundler ${BUNDLER_VERSION}..."
+    gem install bundler -v "${BUNDLER_VERSION}"
+  fi
+}
+
+install_gems() {
+  activate_ruby
+  echo "==> Running bundle install..."
+  bundle _${BUNDLER_VERSION}_ install
+}
+
+setup_database() {
+  activate_ruby
+  echo "==> Setting up database..."
+  bundle exec rake db:setup
+}
+
+install_ruby
+install_bundler
+install_gems
+setup_database
+
+echo ""
+echo "Setup complete."
+echo ""
+echo "Run tests:  bin/setup test"
+echo "Run server: bin/setup server"
+echo ""
+echo "Cloud Agent: use .cloud-agent/setup.sh at the start of each session."
+echo ""
+echo "Or manually:"
+echo "  export PATH=\"\$HOME/.rbenv/bin:\$HOME/.rbenv/shims:\$PATH\""
+echo "  eval \"\$(rbenv init - bash)\""
+echo "  bundle exec rake test"
+echo "  bundle exec rails server -b 0.0.0.0 -p 3000"
+
+if [[ "${1:-}" == "test" ]]; then
+  activate_ruby
+  bundle exec rake test
+elif [[ "${1:-}" == "server" ]]; then
+  activate_ruby
+  exec bundle exec rails server -b 0.0.0.0 -p 3000
+fi

@@ -9,6 +9,6 @@ class Notifier < ActionMailer::Base
   def error_occured(error)
     @error = error
 
-    mail to: "andy@example.com", :subject => 'Depot Mail Error Encountered'
+    mail to: ENV.fetch("ADMIN_EMAIL", "dave@example.com"), subject: "Depot App Error Incident"
   end
 end
