@@ -15,7 +15,7 @@ if command -v apt-get >/dev/null 2>&1; then
   sudo apt-get update -qq
   sudo apt-get install -y -qq \
     build-essential curl git \
-    libsqlite3-dev libssl-dev libreadline-dev zlib1g-dev libyaml-dev
+    libpq-dev libssl-dev libreadline-dev zlib1g-dev libyaml-dev
 fi
 
 if ! command -v rbenv >/dev/null 2>&1; then

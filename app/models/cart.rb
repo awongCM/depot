@@ -1,4 +1,4 @@
-class Cart < ActiveRecord::Base
+class Cart < ApplicationRecord
     has_many :line_items
 
     before_destroy :delete_line_items

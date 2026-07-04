@@ -11,6 +11,13 @@
 /db/*.sqlite3
 /db/*.sqlite3-journal
 
+# Ignore credentials key.
+/config/master.key
+
+# Ignore Active Storage files.
+/storage/
+/tmp/storage/
+
 # Ignore all logfiles and tempfiles.
 /log/*.log
 /tmp

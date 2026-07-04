@@ -1,25 +1,25 @@
-ENV['RAILS_ENV'] ||= 'test'
-require File.expand_path('../../config/environment', __FILE__)
-require 'rails/test_help'
+ENV["RAILS_ENV"] ||= "test"
+require_relative "../config/environment"
+require "rails/test_help"
 
-class ActiveSupport::TestCase
-  # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
-  #
-  # Note: You'll currently still have to declare fixtures explicitly in integration tests
-  # -- they do not yet inherit this setting
-  fixtures :all
+Rails::Controller::Testing.install
 
-  # Add more helper methods to be used by all tests here...
-  def login_as(user)
-    session[:user_id] = users(user).id
+module ActiveSupport
+  class TestCase
+    parallelize(workers: 1)
+
+    fixtures :all
+
+    def login_as(user)
+      session[:user_id] = users(user).id
+    end
+
+    def logout
+      session.delete :user_id
+    end
+
+    def setup
+      login_as :one if self.is_a?(ActionController::TestCase)
+    end
   end
-
-  def logout
-    session.delete :user_id
-  end
-
-  def setup
-    login_as :one if defined? session
-  end
-
 end

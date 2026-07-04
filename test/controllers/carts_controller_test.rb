@@ -1,4 +1,4 @@
-require 'test_helper'
+require "test_helper"
 
 class CartsControllerTest < ActionController::TestCase
   setup do
@@ -17,32 +17,32 @@ class CartsControllerTest < ActionController::TestCase
   end
 
   test "should create cart" do
-    assert_difference('Cart.count') do
-      post :create, cart: {  }
+    assert_difference("Cart.count") do
+      post :create, params: { cart: {} }
     end
 
     assert_redirected_to cart_path(assigns(:cart))
   end
 
   test "should show cart" do
-    get :show, id: @cart
+    get :show, params: { id: @cart }
     assert_response :success
   end
 
   test "should get edit" do
-    get :edit, id: @cart
+    get :edit, params: { id: @cart }
     assert_response :success
   end
 
   test "should update cart" do
-    patch :update, id: @cart, cart: {  }
+    patch :update, params: { id: @cart, cart: {} }
     assert_redirected_to cart_path(assigns(:cart))
   end
 
   test "should destroy cart" do
-    assert_difference('Cart.count', -1) do
+    assert_difference("Cart.count", -1) do
       session[:cart_id] = @cart.id
-      delete :destroy, id: @cart
+      delete :destroy, params: { id: @cart }
     end
 
     assert_nil session[:cart_id]
