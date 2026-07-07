@@ -58,7 +58,8 @@ def csrf_token(html)
 end
 
 def first_line_item_form(html)
-  html[/action="(\/line_items[^"]+)"[^>]*method="post"/, 1]
+  html[/action="(\/line_items[^"]+)"[^>]*method="post"/, 1] ||
+    html[/method="post"[^>]*action="(\/line_items[^"]+)"/, 1]
 end
 
 def product_id(html)
