@@ -216,6 +216,21 @@ bin/setup        Shared local + cloud Ruby/gem/database setup
 
 ---
 
+## Deploying to Render
+
+Phase 1 includes a [`render.yaml`](render.yaml) Blueprint for a web service plus managed PostgreSQL.
+
+1. Fork or connect this repo in the [Render Dashboard](https://dashboard.render.com/)
+2. Create a **Blueprint** from `render.yaml`
+3. Set `RAILS_MASTER_KEY` (copy from local `config/master.key` — never commit it)
+4. Optionally set SMTP vars from [`.env.example`](.env.example) for order emails
+
+The Blueprint wires `DATABASE_URL` automatically. Build runs `dartsass:build` and `db:migrate`; the app starts on `0.0.0.0:$PORT` via Puma.
+
+See [docs/PHASE1.md](docs/PHASE1.md) for the full Phase 1 checklist and worktree workflow.
+
+---
+
 ## License and attribution
 
 Derived from tutorial material in *Agile Web Development with Rails*, 4th Edition,

@@ -31,7 +31,7 @@ available — start with `docker compose up -d` if using the included Compose fi
 
 ## End-to-end testing (Cloud Agent)
 
-This Rails 4.1 app uses **integration tests** for E2E coverage — they boot the
+This Rails 7.2 app uses **integration tests** for E2E coverage — they boot the
 full app and exercise real HTTP flows (no browser needed).
 
 ### Quick E2E (recommended)
