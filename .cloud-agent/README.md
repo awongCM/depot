@@ -26,12 +26,12 @@ Or with tests / server:
 .cloud-agent/setup.sh server
 ```
 
-First run takes a few minutes (Ruby 2.2.10 is compiled from source). Later
-commands in the same session are fast.
+First run takes a few minutes (Ruby 3.2.6 via rbenv). PostgreSQL must be
+available — start with `docker compose up -d` if using the included Compose file.
 
 ## End-to-end testing (Cloud Agent)
 
-This Rails 4.1 app uses **integration tests** for E2E coverage — they boot the
+This Rails 7.2 app uses **integration tests** for E2E coverage — they boot the
 full app and exercise real HTTP flows (no browser needed).
 
 ### Quick E2E (recommended)
@@ -86,10 +86,12 @@ UI yourself, run locally with `bin/setup` and open http://localhost:3000.
 
 ## Local development (not Cloud Agent)
 
-Use `bin/setup` instead, after installing Ruby 2.2.10 via RVM or rbenv:
+Use `bin/setup` instead, after installing Ruby 3.2.6 via RVM or rbenv and
+starting PostgreSQL:
 
 ```bash
-rvm install 2.2.10 && rvm use 2.2.10   # or: rbenv install 2.2.10
+docker compose up -d
+rbenv install 3.2.6 && rbenv local 3.2.6
 bin/setup
 bin/setup test                         # or: .cloud-agent/e2e.sh (also works)
 ```

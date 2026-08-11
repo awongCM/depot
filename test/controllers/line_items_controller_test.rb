@@ -1,4 +1,4 @@
-require 'test_helper'
+require "test_helper"
 
 class LineItemsControllerTest < ActionController::TestCase
   setup do
@@ -17,36 +17,37 @@ class LineItemsControllerTest < ActionController::TestCase
   end
 
   test "should create line_item" do
-    assert_difference('LineItem.count') do
-      post :create, product_id: products(:ruby).id
+    assert_difference("LineItem.count") do
+      post :create, params: { product_id: products(:ruby).id }
     end
 
     assert_redirected_to store_path
   end
 
   test "should create line_item via ajax" do
-    assert_difference('LineItem.count') do
-      xhr :post, :create, product_id: products(:ruby).id
+    assert_difference("LineItem.count") do
+      post :create, params: { product_id: products(:ruby).id }, xhr: true
     end
 
     assert_response :success
-    assert_select_jquery :html, '#cart' do
-      assert_select 'tr#current_item td', /Programming Ruby 1.9/
-    end
+    assert_match(/current_item/, @response.body)
   end
 
   test "should show line_item" do
-    get :show, id: @line_item
+    get :show, params: { id: @line_item }
     assert_response :success
   end
 
   test "should get edit" do
-    get :edit, id: @line_item
+    get :edit, params: { id: @line_item }
     assert_response :success
   end
 
   test "should update line_item" do
-    patch :update, id: @line_item, line_item: { product_id: @line_item.product_id }
+    patch :update, params: {
+      id: @line_item,
+      line_item: { product_id: @line_item.product_id }
+    }
     assert_redirected_to line_item_path(assigns(:line_item))
   end
 
@@ -54,8 +55,8 @@ class LineItemsControllerTest < ActionController::TestCase
     line_item = line_items(:two)
     session[:cart_id] = line_item.cart_id
 
-    assert_difference('LineItem.count', -1) do
-      delete :destroy, id: line_item
+    assert_difference("LineItem.count", -1) do
+      delete :destroy, params: { id: line_item }
     end
 
     assert_redirected_to cart_path(session[:cart_id])

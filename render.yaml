@@ -1,0 +1,31 @@
+databases:
+  - name: depot-db
+    plan: free
+    databaseName: depot
+    user: depot
+
+services:
+  - type: web
+    name: depot
+    runtime: ruby
+    plan: free
+    buildCommand: bundle install && bundle exec rails dartsass:build && bundle exec rake db:migrate
+    startCommand: bundle exec puma -C config/puma.rb -b 0.0.0.0:$PORT
+    healthCheckPath: /
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: depot-db
+          property: connectionString
+      - key: RAILS_MASTER_KEY
+        sync: false
+      - key: SECRET_KEY_BASE
+        generateValue: true
+      - key: RAILS_ENV
+        value: production
+      - key: RAILS_LOG_TO_STDOUT
+        value: "true"
+      - key: RAILS_SERVE_STATIC_FILES
+        value: "true"
+      - key: ADMIN_EMAIL
+        sync: false

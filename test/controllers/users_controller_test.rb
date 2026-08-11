@@ -1,4 +1,4 @@
-require 'test_helper'
+require "test_helper"
 
 class UsersControllerTest < ActionController::TestCase
   setup do
@@ -17,31 +17,36 @@ class UsersControllerTest < ActionController::TestCase
   end
 
   test "should create user" do
-    assert_difference('User.count') do
-      post :create, user: { name: 'sam', password: 'secret', password_confirmation: 'secret' }
+    assert_difference("User.count") do
+      post :create, params: {
+        user: { name: "sam", password: "secret", password_confirmation: "secret" }
+      }
     end
 
     assert_redirected_to users_path
   end
 
   test "should show user" do
-    get :show, id: @user
+    get :show, params: { id: @user }
     assert_response :success
   end
 
   test "should get edit" do
-    get :edit, id: @user
+    get :edit, params: { id: @user }
     assert_response :success
   end
 
   test "should update user" do
-    patch :update, id: @user, user: { name: @user.name, password: 'secret', password_confirmation: 'secret' }
+    patch :update, params: {
+      id: @user,
+      user: { name: @user.name, password: "secret", password_confirmation: "secret" }
+    }
     assert_redirected_to users_path
   end
 
   test "should destroy user" do
-    assert_difference('User.count', -1) do
-      delete :destroy, id: @user
+    assert_difference("User.count", -1) do
+      delete :destroy, params: { id: @user }
     end
 
     assert_redirected_to users_path

@@ -1,4 +1,4 @@
-class PaymentType < ActiveRecord::Base
+class PaymentType < ApplicationRecord
     has_many :orders
 
     def self.names
