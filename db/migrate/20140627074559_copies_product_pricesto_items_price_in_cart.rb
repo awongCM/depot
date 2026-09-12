@@ -1,4 +1,4 @@
-class CopiesProductPricestoItemsPriceInCart < ActiveRecord::Migration[7.2]
+class CopiesProductPricestoItemsPriceInCart < ActiveRecord::Migration[4.2]
 
   def up
         say_with_time "Updating prices..." do

@@ -1,4 +1,4 @@
-class AddShipDateToOrders < ActiveRecord::Migration[7.2]
+class AddShipDateToOrders < ActiveRecord::Migration[4.2]
   def change
       add_column :orders, :ship_date, :datetime
   end

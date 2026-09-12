@@ -5,7 +5,7 @@
       <p><%= t('errors.template.body')%></p>
       <ul>
       <% @order.errors.full_messages.each do |message| %>
-        <li><%= raw message %></li>
+        <li><%= message %></li>
       <% end %>
       </ul>
     </div>

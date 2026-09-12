@@ -43,7 +43,7 @@ class OrdersController < ApplicationController
         format.html { redirect_to store_url, notice: I18n.t('.thanks') }
         format.json { render :show, status: :created, location: @order }
       else
-        format.html { render :new }
+        format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @order.errors, status: :unprocessable_entity }
       end
     end
@@ -60,7 +60,7 @@ class OrdersController < ApplicationController
         format.html { redirect_to @order, notice: 'Order was successfully updated.' }
         format.json { render :show, status: :ok, location: @order }
       else
-        format.html { render :edit }
+        format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @order.errors, status: :unprocessable_entity }
       end
     end

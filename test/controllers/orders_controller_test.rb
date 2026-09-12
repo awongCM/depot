@@ -46,6 +46,20 @@ class OrdersControllerTest < ActionController::TestCase
     assert_redirected_to store_path
   end
 
+  test "invalid create re-renders new as unprocessable entity" do
+    item = LineItem.new(product: products(:ruby), price: products(:ruby).price, quantity: 1)
+    item.build_cart
+    item.save!
+    session[:cart_id] = item.cart.id
+
+    post :create, params: {
+      order: { name: "", address: "", email: "", payment_type_id: "" }
+    }
+
+    assert_response :unprocessable_entity
+    assert_template :new
+  end
+
   test "should show order" do
     get :show, params: { id: @order }
     assert_response :success

@@ -9,7 +9,7 @@ services:
     name: depot
     runtime: ruby
     plan: free
-    buildCommand: bundle install && bundle exec rails dartsass:build && bundle exec rake db:migrate
+    buildCommand: bundle install && bundle exec rails dartsass:build && bundle exec rails db:prepare
     startCommand: bundle exec puma -C config/puma.rb -b 0.0.0.0:$PORT
     healthCheckPath: /
     envVars:
@@ -27,5 +27,19 @@ services:
         value: "true"
       - key: RAILS_SERVE_STATIC_FILES
         value: "true"
+      - key: SOLID_QUEUE_IN_PUMA
+        value: "true"
       - key: ADMIN_EMAIL
+        sync: false
+      - key: SMTP_ADDRESS
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_DOMAIN
+        sync: false
+      - key: SMTP_AUTHENTICATION
+        sync: false
+      - key: SMTP_USERNAME
+        sync: false
+      - key: SMTP_PASSWORD
         sync: false

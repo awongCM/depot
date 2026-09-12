@@ -12,12 +12,10 @@
     Total Site Visit Count: <%= pluralize(session[:counter], "") %>
   <% end %>
   <div id="banner">
-    <%= form_tag store_path, class: "locale" do %>
+    <%= form_tag store_path, class: "locale", data: { controller: "locale", action: "change->locale#submit" } do %>
       <%= select_tag "set_locale",
-              options_for_select(LANGUAGES, I18n.locale.to_s),
-              onchange: "this.form.submit()" %>
+              options_for_select(LANGUAGES, I18n.locale.to_s) %>
       <%= submit_tag "submit" %>
-      <%= javascript_tag "$('.locale input').hide()" %>
     <% end %>
     <%= image_tag("logo.png") %>
     <%= @page_title || t(".title") %>

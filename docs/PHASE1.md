@@ -7,6 +7,12 @@ checklist for Phase 1 of the Depot upgrade.
 
 See [README.md](../README.md) for the full four-phase roadmap.
 
+The six milestone hops below were delivered in one branch
+(`cursor/phase1-modern-foundation-c3a8`) rather than six sequential PRs.
+Hop-specific gates still apply to that single PR: `zeitwerk:check`,
+Solid Queue tables + a supervisor process, Turbo 422 / legacy UJS isolation,
+`throw :abort` on `before_destroy`, STDOUT logging, and Blueprint SMTP + seed.
+
 ---
 
 ## Worktree layout
@@ -72,6 +78,7 @@ git -C ~/depot worktree add ~/depot-worktrees/02-rails-52-postgres -b phase1/02-
 Before opening or merging each PR:
 
 - [ ] `bundle exec rake test` — full suite green
+- [ ] `bundle exec rails zeitwerk:check`
 - [ ] `.cloud-agent/e2e.sh` — integration E2E flows pass
 - [ ] `bundle exec brakeman -q -w2` — no new high-confidence issues
 - [ ] `bundle exec bundler-audit check` — no unaddressed critical CVEs
@@ -133,6 +140,20 @@ Required environment variables:
 | `DATABASE_URL` | Managed PostgreSQL (auto-wired from Blueprint) |
 | `RAILS_MASTER_KEY` | Decrypts `config/credentials.yml.enc` |
 | `SECRET_KEY_BASE` | Session signing (can live in credentials) |
+| `SOLID_QUEUE_IN_PUMA` | Runs the Solid Queue supervisor inside Puma (single instance) |
 | `SMTP_*` | Order confirmation emails (see `.env.example`) |
+| `ADMIN_EMAIL` | Destination for admin error notifications |
 
 Never commit `config/master.key`.
+
+After the first deploy, seed catalog, payment types, and the default admin
+once (`dave` / `secret`):
+
+```bash
+bundle exec rails db:seed
+```
+
+Do not add `db:seed` to the build command — re-seeding must stay a one-shot.
+
+Free web services spin down after 15 minutes of inactivity. Free Postgres
+instances expire after 30 days.

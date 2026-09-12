@@ -225,7 +225,10 @@ Phase 1 includes a [`render.yaml`](render.yaml) Blueprint for a web service plus
 3. Set `RAILS_MASTER_KEY` (copy from local `config/master.key` — never commit it)
 4. Optionally set SMTP vars from [`.env.example`](.env.example) for order emails
 
-The Blueprint wires `DATABASE_URL` automatically. Build runs `dartsass:build` and `db:migrate`; the app starts on `0.0.0.0:$PORT` via Puma.
+The Blueprint wires `DATABASE_URL` automatically and runs Solid Queue inside
+Puma (`SOLID_QUEUE_IN_PUMA`). Build runs `dartsass:build` and `db:prepare`;
+the app starts on `0.0.0.0:$PORT` via Puma. Set `SMTP_*` for order emails,
+then seed once after the first deploy (`bundle exec rails db:seed`).
 
 See [docs/PHASE1.md](docs/PHASE1.md) for the full Phase 1 checklist and worktree workflow.
 

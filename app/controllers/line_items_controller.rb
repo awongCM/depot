@@ -1,6 +1,6 @@
 class LineItemsController < ApplicationController
   include CurrentCart
-  skip_before_action :authorize, only: :create
+  skip_before_action :authorize, only: [:create, :decrement]
   before_action :set_cart, :reset_visit_counter, only: [:create, :decrement]
   before_action :set_line_item, only: [:show, :edit, :update, :destroy, :decrement]
 
@@ -36,7 +36,7 @@ class LineItemsController < ApplicationController
         format.js {@current_item = @line_item}
         format.json { render :show, status: :created, location: @line_item }
       else
-        format.html { render :new }
+        format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @line_item.errors, status: :unprocessable_entity }
       end
     end
@@ -50,7 +50,7 @@ class LineItemsController < ApplicationController
         format.html { redirect_to @line_item, notice: 'Line item was successfully updated.' }
         format.json { render :show, status: :ok, location: @line_item }
       else
-        format.html { render :edit }
+        format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @line_item.errors, status: :unprocessable_entity }
       end
     end
