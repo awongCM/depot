@@ -13,7 +13,10 @@ class StoreControllerTest < ActionController::TestCase
   test "markup needed for store add-to-cart buttons is in place" do
     get :index
     assert_select '.store .entry > img', 3
+    assert_select '.entry[data-controller="add-to-cart"]', 3
+    assert_select '.entry img[data-action="click->add-to-cart#add"]', 3
     assert_select ".entry button[type=submit]", 3
+    assert_select '.entry form[data-turbo="false"]', 3
   end
 
 end
