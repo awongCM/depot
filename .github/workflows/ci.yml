@@ -50,7 +50,8 @@ jobs:
         run: bundle exec rake test
 
       - name: Run Brakeman
-        run: bundle exec brakeman -q -w2
+        # EOLRuby/EOLRails are known Phase 1 pins (Ruby 3.2.6 / Rails 7.2).
+        run: bundle exec brakeman -q -w2 --except EOLRuby,EOLRails
 
       - name: Run bundler-audit
         run: bundle exec bundler-audit check --update

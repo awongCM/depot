@@ -9,7 +9,7 @@ class Product < ApplicationRecord
     validates :title, uniqueness: true
     validates :title, length: {minimum: 10, too_short: "is too short.  It must contain at least 10 characters"}
     validates :image_url, allow_blank: true, format: {
-        with: %r{\.(gif|jpg|png)\Z}i,
+        with: %r{\A.+\.(gif|jpg|png)\z}i,
         message: 'must be a URL for GIF, JPG or PNG image.'
     }
 
