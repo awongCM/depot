@@ -10,6 +10,11 @@ class StoreControllerTest < ActionController::TestCase
     assert_select '.price', /\$[, \d]+\.\d\d/
   end
 
+  test "changing locale posts to the store and redirects" do
+    post :index, params: { set_locale: "es" }
+    assert_redirected_to store_url(locale: "es")
+  end
+
   test "markup needed for store add-to-cart buttons is in place" do
     get :index
     assert_select '.store .entry > img', 3
