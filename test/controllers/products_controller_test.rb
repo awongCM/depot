@@ -35,6 +35,15 @@ class ProductsControllerTest < ActionController::TestCase
     assert_redirected_to product_path(assigns(:product))
   end
 
+  test "invalid create re-renders new as unprocessable entity" do
+    post :create, params: {
+      product: { title: "", description: "", image_url: "", price: nil, locale: "" }
+    }
+
+    assert_response :unprocessable_entity
+    assert_template :new
+  end
+
   test "should show product" do
     get :show, params: { id: @product }
     assert_response :success
