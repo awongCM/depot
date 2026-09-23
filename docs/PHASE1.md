@@ -100,10 +100,11 @@ Before opening or merging each PR:
 
 **PR 5:** Mail tests updated for `deliver_later` / `perform_enqueued_jobs`.
 
-**PR 6:** `render.yaml` validates; deploy smoke test on Render. Build loads
-`db/queue_schema.rb` after migrate; set `SOLID_QUEUE_IN_PUMA=true` so Puma runs Solid
-Queue workers (required for `deliver_later` on the free web tier). Do not run
-`db:seed` in production (dev-only admin user in seeds).
+**PR 6:** `render.yaml` validates; deploy smoke test on Render. Build runs
+`db:prepare` (Solid Queue tables live in `db/schema.rb`); set
+`SOLID_QUEUE_IN_PUMA=true` so Puma runs Solid Queue workers (required for
+`deliver_later` on the free web tier). Do not add `db:seed` to the Render build
+(dev-only admin in seeds; seed manually once if you want catalog data).
 
 ---
 
