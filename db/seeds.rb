@@ -69,6 +69,8 @@ end
   PaymentType.find_or_create_by!(name: name)
 end
 
-unless User.exists?(name: "dave")
-  User.create!(name: "dave", password: "secret", password_confirmation: "secret")
+User.find_or_create_by!(name: "dave") do |user|
+  user.password = "secret"
+  user.password_confirmation = "secret"
 end
+
