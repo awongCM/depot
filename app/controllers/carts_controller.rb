@@ -16,7 +16,7 @@ class CartsController < ApplicationController
         @cart = Cart.find(params[:id])
       rescue ActiveRecord::RecordNotFound => e
         logger.error "Attempt to access invalid cart #{params[:id]}"
-        Notifier.error_occured(e).deliver
+        Notifier.error_occured(e.message).deliver_later
         redirect_to store_url, :notice => 'Invalid cart'
       else
         respond_to do |format|
@@ -45,7 +45,7 @@ class CartsController < ApplicationController
         format.html { redirect_to @cart, notice: 'Cart was successfully created.' }
         format.json { render :show, status: :created, location: @cart }
       else
-        format.html { render :new }
+        format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @cart.errors, status: :unprocessable_entity }
       end
     end
@@ -59,7 +59,7 @@ class CartsController < ApplicationController
         format.html { redirect_to @cart, notice: 'Cart was successfully updated.' }
         format.json { render :show, status: :ok, location: @cart }
       else
-        format.html { render :edit }
+        format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @cart.errors, status: :unprocessable_entity }
       end
     end
@@ -85,13 +85,13 @@ class CartsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def cart_params
-      params[:cart]
+      params.fetch(:cart, {})
     end
 
     def invalid_cart
       error = ActiveRecord::RecordNotFound.new("invalid cart #{params[:id]}")
       logger.error "Attempt to access invalid cart #{params[:id]}"
-      Notifier.error_occured(error).deliver
+      Notifier.error_occured(error.message).deliver_later
       redirect_to store_url, notice: 'Invalid cart'
     end
 

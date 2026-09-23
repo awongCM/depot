@@ -48,4 +48,21 @@ class ProductTest < ActiveSupport::TestCase
     end
   end
 
+  test "cannot destroy product referenced by line items" do
+    product = products(:ruby)
+    assert product.line_items.any?
+
+    refute product.destroy
+    assert Product.exists?(product.id)
+    assert_includes product.errors[:base], "Line Items present"
+  end
+
+  test "can destroy product with no line items" do
+    product = products(:one)
+    assert product.line_items.empty?
+
+    assert product.destroy
+    refute Product.exists?(product.id)
+  end
+
 end

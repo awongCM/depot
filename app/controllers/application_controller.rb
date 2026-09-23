@@ -16,7 +16,7 @@ class ApplicationController < ActionController::Base
       if (User.count.zero?)
         if !(request.path_parameters[:controller] == 'users' and request.path_parameters[:action] == 'new')
           if !(request.path_parameters[:controller] == 'users' and request.path_parameters[:action] == 'create')
-              redirect_to(:controller=>'admin', :action=>'login')
+              redirect_to login_url
           end
         end
       end

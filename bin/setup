@@ -8,7 +8,6 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 RUBY_VERSION="$(cat .ruby-version | tr -d '[:space:]')"
-BUNDLER_VERSION="1.17.3"
 
 echo "==> Depot setup (Ruby ${RUBY_VERSION})"
 
@@ -64,28 +63,19 @@ EOF
   exit 1
 }
 
-install_bundler() {
-  activate_ruby
-  if ! gem list bundler -i -v "${BUNDLER_VERSION}" >/dev/null 2>&1; then
-    echo "==> Installing Bundler ${BUNDLER_VERSION}..."
-    gem install bundler -v "${BUNDLER_VERSION}"
-  fi
-}
-
 install_gems() {
   activate_ruby
   echo "==> Running bundle install..."
-  bundle _${BUNDLER_VERSION}_ install
+  bundle install
 }
 
 setup_database() {
   activate_ruby
   echo "==> Setting up database..."
-  bundle exec rake db:setup
+  bundle exec rake db:prepare
 }
 
 install_ruby
-install_bundler
 install_gems
 setup_database
 
@@ -95,13 +85,10 @@ echo ""
 echo "Run tests:  bin/setup test"
 echo "Run server: bin/setup server"
 echo ""
+echo "PostgreSQL required. Start with: docker compose up -d"
+echo ""
 echo "Cloud Agent: use .cloud-agent/setup.sh at the start of each session."
 echo ""
-echo "Or manually:"
-echo "  export PATH=\"\$HOME/.rbenv/bin:\$HOME/.rbenv/shims:\$PATH\""
-echo "  eval \"\$(rbenv init - bash)\""
-echo "  bundle exec rake test"
-echo "  bundle exec rails server -b 0.0.0.0 -p 3000"
 
 if [[ "${1:-}" == "test" ]]; then
   activate_ruby

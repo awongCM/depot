@@ -20,7 +20,7 @@ activate_ruby() {
 }
 
 run_integration_e2e() {
-  bundle exec rake test \
+  bundle exec rails test \
     test/integration/user_stories_test.rb \
     test/integration/admin_workflow_test.rb
 }

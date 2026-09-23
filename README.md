@@ -69,45 +69,31 @@ Before stabilization, the codebase had several bugs and risks:
 
 Work is planned in four phases. Each phase should leave the app runnable and tested.
 
-### Phase 0 — Stabilize and secure ✅ (current branch)
+### Phase 0 — Stabilize and secure ✅
 
 **Goal:** Safe baseline on Rails 4.1, ready for incremental upgrade.
 
-| Area | What was done |
-|------|----------------|
-| Security | Removed hardcoded SMTP credentials; `.env.example`; rotate exposed passwords |
-| Bugs | Strong params, associations, cart session, line item pricing, layout nil checks |
-| Tests | Expanded model/integration tests; admin workflow; 65 tests passing |
-| CI | GitHub Actions with Brakeman and bundler-audit |
-| Tooling | `.ruby-version` (2.2.10), `bin/setup`, `.cloud-agent/` for ephemeral VMs |
-| E2E | `.cloud-agent/e2e.sh` integration + live HTTP smoke tests |
-| Gems | Pinned `json` and `bcrypt` for modern compiler compatibility |
-
-**You are here.** Ruby **2.2.10** is required — do not use Ruby 3.x until Phase 1 completes.
+Completed on the `master` branch before Phase 1.
 
 ---
 
-### Phase 1 — Modern Rails foundation
+### Phase 1 — Modern Rails foundation ✅ (current branch)
+
+**Implementation guide:** [docs/PHASE1.md](docs/PHASE1.md) — worktree workflow, branch naming, PR checklist.
 
 **Goal:** Rails 7.2+ on PostgreSQL, deployable to Render or similar.
 
-Upgrade path (incremental — run tests at each step):
+| Area | What was done |
+|------|----------------|
+| Rails / Ruby | **7.2** on **Ruby 3.2.6** |
+| Database | **PostgreSQL** (dev/test/prod); `docker-compose.yml` for local |
+| Assets | **Propshaft** + **importmaps**; CoffeeScript removed |
+| Frontend | **Hotwire** (Turbo + Stimulus); jQuery via importmap for legacy AJAX |
+| Jobs | `deliver_later` with **Solid Queue** in production |
+| Security | `force_ssl`, CSP initializer, credentials |
+| Deploy | [`render.yaml`](render.yaml) Blueprint |
 
-```
-Rails 4.1 → 4.2 → 5.2 → 6.1 → 7.2
-Ruby    2.2  → 2.5  → 2.7  → 3.2+
-```
-
-Along the way:
-
-- Switch database to **PostgreSQL**
-- Replace `secrets.yml` with `credentials.yml.enc`
-- CoffeeScript → plain JavaScript; Turbolinks → **Hotwire** (Turbo + Stimulus)
-- Sprockets → **Propshaft** + importmaps (or jsbundling-rails)
-- `deliver` → `deliver_later` with **Solid Queue** or Sidekiq
-- Enable `force_ssl`, security headers, CSP
-- Address Brakeman / bundler-audit findings as versions move forward
-- Add `render.yaml` Blueprint for deployment
+**You are here.** Ruby **3.2.6** and PostgreSQL are required.
 
 ---
 
@@ -160,17 +146,20 @@ You could migrate product data into Solidus/Spree and customize from there.
 
 ### Requirements
 
-- **Ruby 2.2.10** (see `.ruby-version`) — not Ruby 3.x on this branch
-- Bundler **1.17.x**
-- SQLite3 (development/test)
+- **Ruby 3.2.6** (see `.ruby-version`)
+- **PostgreSQL 16+** (local via Docker or native install)
+- Bundler **2.x**
 
 ### Local setup (Mac / Linux)
 
 ```bash
-# Install Ruby 2.2.10 via RVM or rbenv first
-rvm install 2.2.10 && rvm use 2.2.10   # or: rbenv install 2.2.10
+# Start PostgreSQL (Docker)
+docker compose up -d
 
-cp .env.example .env   # optional: SMTP settings for real email in development
+# Install Ruby 3.2.6 via rbenv or RVM
+rbenv install 3.2.6 && rbenv local 3.2.6
+
+cp .env.example .env   # optional: SMTP and database settings
 bin/setup
 bin/setup test         # run full test suite
 bin/setup server       # http://localhost:3000
@@ -199,7 +188,7 @@ bundle exec rake test                    # full suite (~65 tests)
 bundle exec rake test TEST=test/integration/user_stories_test.rb
 ```
 
-Security scans (expect findings on Rails 4.1 until Phase 1):
+Security scans:
 
 ```bash
 bundle exec brakeman -q -w2 --no-exit-on-warn
@@ -218,12 +207,32 @@ app/
 config/
   routes.rb      storefront at /, admin at /admin, localized routes
 db/
-  schema.rb      SQLite schema (products, carts, orders, …)
+  schema.rb      PostgreSQL schema (products, carts, orders, …)
 test/
   integration/   E2E flows (checkout, admin login)
 .cloud-agent/    Cloud Agent–only bootstrap and E2E scripts
 bin/setup        Shared local + cloud Ruby/gem/database setup
 ```
+
+---
+
+## Deploying to Render
+
+Phase 1 includes a [`render.yaml`](render.yaml) Blueprint for a web service plus managed PostgreSQL.
+
+1. Fork or connect this repo in the [Render Dashboard](https://dashboard.render.com/)
+2. Create a **Blueprint** from `render.yaml`
+3. Set `RAILS_MASTER_KEY` (copy from local `config/master.key` — never commit it)
+4. Optionally set SMTP vars from [`.env.example`](.env.example) for order emails
+
+The Blueprint wires `DATABASE_URL` automatically. Build runs `dartsass:build` and
+`db:prepare` (primary schema includes Solid Queue tables). Puma starts on
+`0.0.0.0:$PORT` with `SOLID_QUEUE_IN_PUMA` so enqueued mail jobs run in-process.
+Set `SMTP_*` from [`.env.example`](.env.example) for order emails. Seed data is for
+development or a one-time post-deploy catalog setup (`rails db:seed` creates tutorial
+products and demo admin `dave`/`secret` — do not run seeds blindly in production).
+
+See [docs/PHASE1.md](docs/PHASE1.md) for the full Phase 1 checklist and worktree workflow.
 
 ---
 

@@ -1,50 +1,42 @@
+require "active_support/core_ext/integer/time"
+
 Rails.application.configure do
-  # Settings specified here will take precedence over those in config/application.rb.
-
-  # In the development environment your application's code is reloaded on
-  # every request. This slows down response time but is perfect for development
-  # since you don't have to restart the web server when you make code changes.
-  config.cache_classes = false
-
-  # Do not eager load code on boot.
+  config.enable_reloading = true
   config.eager_load = false
+  config.consider_all_requests_local = true
+  config.server_timing = true
 
-  # Show full error reports and disable caching.
-  config.consider_all_requests_local       = true
-  config.action_controller.perform_caching = false
+  if Rails.root.join("tmp/caching-dev.txt").exist?
+    config.action_controller.perform_caching = true
+    config.cache_store = :memory_store
+    config.public_file_server.headers = { "Cache-Control" => "public, max-age=#{2.days.to_i}" }
+  else
+    config.action_controller.perform_caching = false
+    config.cache_store = :null_store
+  end
 
-  # Don't care if the mailer can't send.
-  config.action_mailer.raise_delivery_errors = false
-
-  # Print deprecation notices to the Rails logger.
+  config.active_storage.service = :local
   config.active_support.deprecation = :log
-
-  # Raise an error on page load if there are pending migrations.
+  config.active_support.disallowed_deprecation = :raise
+  config.active_support.disallowed_deprecation_warnings = []
   config.active_record.migration_error = :page_load
-
-  # Debug mode disables concatenation and preprocessing of assets.
-  # This option may cause significant delays in view rendering with a large
-  # number of complex assets.
-  config.assets.debug = true
-
-  # Adds additional error checking when serving assets at runtime.
-  # Checks for improperly declared sprockets dependencies.
-  # Raises helpful error messages.
-  config.assets.raise_runtime_errors = true
-
-  # Raises error for missing translations
-  # config.action_view.raise_on_missing_translations = true
-
+  config.active_record.verbose_query_logs = true
+  config.active_job.verbose_enqueue_logs = true
+  config.active_job.queue_adapter = :async
+  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.perform_caching = false
   config.action_mailer.delivery_method = :smtp
-
   config.action_mailer.smtp_settings = {
-      address: ENV.fetch("SMTP_ADDRESS", "smtp.gmail.com"),
-      port: ENV.fetch("SMTP_PORT", 587).to_i,
-      domain: ENV.fetch("SMTP_DOMAIN", "example.com"),
-      authentication: ENV.fetch("SMTP_AUTHENTICATION", "plain"),
-      user_name: ENV["SMTP_USERNAME"],
-      password: ENV["SMTP_PASSWORD"],
-      enable_starttls_auto: true
+    address: ENV.fetch("SMTP_ADDRESS", "smtp.gmail.com"),
+    port: ENV.fetch("SMTP_PORT", 587).to_i,
+    domain: ENV.fetch("SMTP_DOMAIN", "example.com"),
+    authentication: ENV.fetch("SMTP_AUTHENTICATION", "plain"),
+    user_name: ENV["SMTP_USERNAME"],
+    password: ENV["SMTP_PASSWORD"],
+    enable_starttls_auto: true
   }
 
+  config.assets.quiet = true
+  config.action_view.annotate_rendered_view_with_filenames = true
+  config.action_controller.raise_on_missing_callback_actions = true
 end

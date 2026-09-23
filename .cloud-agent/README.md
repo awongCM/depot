@@ -26,12 +26,12 @@ Or with tests / server:
 .cloud-agent/setup.sh server
 ```
 
-First run takes a few minutes (Ruby 2.2.10 is compiled from source). Later
-commands in the same session are fast.
+First run takes a few minutes (Ruby 3.2.6 via rbenv). PostgreSQL must be
+available — start with `docker compose up -d` if using the included Compose file.
 
 ## End-to-end testing (Cloud Agent)
 
-This Rails 4.1 app uses **integration tests** for E2E coverage — they boot the
+This Rails 7.2 app uses **integration tests** for E2E coverage — they boot the
 full app and exercise real HTTP flows (no browser needed).
 
 ### Quick E2E (recommended)
@@ -69,6 +69,21 @@ Tests against a **running dev server** (development DB, real CSRF):
 Or ask the Cloud Agent: *"Run `.cloud-agent/e2e.sh --live` with the server
 running."*
 
+### Walkthrough screenshots (Cloud Agent)
+
+Headless browser captures for PR walkthroughs (storefront, cart, admin, checkout):
+
+```bash
+# Terminal 1 — start the server (seeds admin user dave / secret)
+.cloud-agent/setup.sh server
+
+# Terminal 2 — capture PNGs to /opt/cursor/artifacts/
+.cloud-agent/capture_demo_screenshots.sh
+```
+
+Requires Node.js (installed by `bootstrap.sh`). First run installs Puppeteer under
+`.cloud-agent/demo-screenshots/`.
+
 ### Manual browser testing
 
 Cloud Agent VMs do not expose a public URL by default. For clicking through the
@@ -83,13 +98,17 @@ UI yourself, run locally with `bin/setup` and open http://localhost:3000.
 | `bootstrap.sh` | Installs Linux packages and rbenv on a fresh VM |
 | `e2e.sh` | End-to-end test runner |
 | `live_smoke.rb` | HTTP smoke test against a running dev server |
+| `capture_demo_screenshots.sh` | Headless Puppeteer screenshots for walkthrough artifacts |
+| `demo-screenshots/` | `capture_depot_demo.mjs` and local Puppeteer install |
 
 ## Local development (not Cloud Agent)
 
-Use `bin/setup` instead, after installing Ruby 2.2.10 via RVM or rbenv:
+Use `bin/setup` instead, after installing Ruby 3.2.6 via RVM or rbenv and
+starting PostgreSQL:
 
 ```bash
-rvm install 2.2.10 && rvm use 2.2.10   # or: rbenv install 2.2.10
+docker compose up -d
+rbenv install 3.2.6 && rbenv local 3.2.6
 bin/setup
 bin/setup test                         # or: .cloud-agent/e2e.sh (also works)
 ```

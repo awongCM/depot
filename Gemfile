@@ -1,54 +1,33 @@
-source 'https://rubygems.org'
+source "https://rubygems.org"
 
-# json 1.8.1 (pulled in by Rails 4.1) does not compile on modern GCC.
-gem 'json', '~> 1.8.6'
+ruby "3.2.6"
 
-# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.1.1'
-# Use sqlite3 as the database for Active Record
-gem 'sqlite3'
-# Use SCSS for stylesheets
-gem 'sass-rails', '~> 4.0.3'
-# Use Uglifier as compressor for JavaScript assets
-gem 'uglifier', '>= 1.3.0'
-# Use CoffeeScript for .js.coffee assets and views
-gem 'coffee-rails', '~> 4.0.0'
-# See https://github.com/sstephenson/execjs#readme for more supported runtimes
-# gem 'therubyracer',  platforms: :ruby
+gem "rails", "~> 7.2.3", ">= 7.2.3.2"
+gem "pg"
+gem "puma"
+gem "bootsnap", require: false
 
-# Use jquery as the JavaScript library
-gem 'jquery-rails'
+gem "propshaft"
+gem "importmap-rails"
+gem "turbo-rails"
+gem "stimulus-rails"
+gem "dartsass-rails"
 
-gem 'jquery-ui-rails'
-
-#gem 'debugger2', :git => "git://github.com/ko1/debugger2.git"
-
-# Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
-gem 'turbolinks'
-# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem 'jbuilder', '~> 2.0'
-# bundle exec rake doc:rails generates the API under doc/api.
-gem 'sdoc', '~> 0.4.0',          group: :doc
-
-# Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-gem 'spring',        group: :development
-
-gem 'pry-byebug',  group: :development
+gem "jbuilder"
+gem "bcrypt", "~> 3.1.12"
+gem "solid_queue"
 
 group :development, :test do
-  gem 'brakeman', require: false
-  gem 'bundler-audit', require: false
+  gem "debug", platforms: %i[mri]
+  gem "brakeman", require: false
+  gem "bundler-audit", require: false
 end
 
-# Use ActiveModel has_secure_password
-gem 'bcrypt', '~> 3.1.12'
+group :development do
+  gem "web-console"
+end
 
-# Use unicorn as the app server
-# gem 'unicorn'
-
-# Use Capistrano for deployment
-# gem 'capistrano-rails', group: :development
-
-# Use debugger
-# gem 'debugger', group: [:development, :test]
-
+group :test do
+  gem "rails-controller-testing"
+  gem "minitest", "~> 5.25"
+end

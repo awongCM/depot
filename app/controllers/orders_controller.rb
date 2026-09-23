@@ -39,11 +39,11 @@ class OrdersController < ApplicationController
       if @order.save
         Cart.destroy(session[:cart_id])
         session[:cart_id]=nil
-        OrderNotifier.received(@order).deliver
+        OrderNotifier.received(@order).deliver_later
         format.html { redirect_to store_url, notice: I18n.t('.thanks') }
         format.json { render :show, status: :created, location: @order }
       else
-        format.html { render :new }
+        format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @order.errors, status: :unprocessable_entity }
       end
     end
@@ -55,12 +55,12 @@ class OrdersController < ApplicationController
     @order = Order.find(params[:id])
 
      respond_to do |format|
-      if @order.update_attributes(order_update_params)
-        OrderNotifier.shipped(@order).deliver unless @order.ship_date.nil?
+      if @order.update(order_update_params)
+        OrderNotifier.shipped(@order).deliver_later unless @order.ship_date.nil?
         format.html { redirect_to @order, notice: 'Order was successfully updated.' }
         format.json { render :show, status: :ok, location: @order }
       else
-        format.html { render :edit }
+        format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @order.errors, status: :unprocessable_entity }
       end
     end
