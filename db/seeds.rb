@@ -65,3 +65,11 @@ Product.create!(title: 'Ruby on Rails',
   price: 40.95,
   locale: 'en')
 
+PaymentType.find_or_create_by!(name: "Check")
+PaymentType.find_or_create_by!(name: "Credit Card")
+PaymentType.find_or_create_by!(name: "Purchase Order")
+
+User.find_or_create_by!(name: "dave") do |user|
+  user.password = "secret"
+end
+

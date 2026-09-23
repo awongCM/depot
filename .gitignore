@@ -25,3 +25,6 @@
 # Ignore local environment files.
 .env
 .env.local
+
+# Cloud Agent demo screenshot tooling (installed by capture_demo_screenshots.sh)
+.cloud-agent/demo-screenshots/node_modules/
