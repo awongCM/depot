@@ -9,7 +9,7 @@ services:
     name: depot
     runtime: ruby
     plan: free
-    buildCommand: bundle install && bundle exec rails dartsass:build && bundle exec rake db:migrate
+    buildCommand: bundle install && bundle exec rails dartsass:build && bundle exec rake db:migrate && bundle exec rails runner "load Rails.root.join('db/queue_schema.rb')"
     startCommand: bundle exec puma -C config/puma.rb -b 0.0.0.0:$PORT
     healthCheckPath: /
     envVars:
@@ -26,6 +26,8 @@ services:
       - key: RAILS_LOG_TO_STDOUT
         value: "true"
       - key: RAILS_SERVE_STATIC_FILES
+        value: "true"
+      - key: SOLID_QUEUE_IN_PUMA
         value: "true"
       - key: ADMIN_EMAIL
         sync: false

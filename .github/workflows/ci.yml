@@ -44,6 +44,9 @@ jobs:
       - name: Set up database
         run: bundle exec rake db:create db:schema:load
 
+      - name: Build CSS (dartsass)
+        run: bundle exec rails dartsass:build
+
       - name: Run tests
         run: bundle exec rake test
 
@@ -52,4 +55,3 @@ jobs:
 
       - name: Run bundler-audit
         run: bundle exec bundler-audit check --update
-        continue-on-error: true

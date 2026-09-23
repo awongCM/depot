@@ -26,6 +26,12 @@ Rails.application.configure do
     enable_starttls_auto: true
   }
 
+  mailer_host = ENV["MAILER_HOST"].presence || ENV["RENDER_EXTERNAL_HOSTNAME"].presence
+  if mailer_host
+    config.action_mailer.default_url_options = { host: mailer_host, protocol: "https" }
+    config.hosts << mailer_host
+  end
+
   config.force_ssl = true
   config.assume_ssl = true
 end

@@ -5,6 +5,12 @@ checklist for Phase 1 of the Depot upgrade.
 
 **Goal:** Rails 7.2+ on PostgreSQL, deployable to Render.
 
+**Delivery note:** The milestone table below describes the original six-PR worktree
+plan. [PR #31](https://github.com/awongCM/depot/pull/31) on
+`cursor/phase1-modern-foundation-c3a8` intentionally **consolidates** those hops into
+one branch for the Cloud Agent upgrade; use the worktree flow for future phases or if
+you prefer incremental merges.
+
 See [README.md](../README.md) for the full four-phase roadmap.
 
 ---
@@ -87,7 +93,10 @@ Before opening or merging each PR:
 
 **PR 5:** Mail tests updated for `deliver_later` / `perform_enqueued_jobs`.
 
-**PR 6:** `render.yaml` validates; deploy smoke test on Render.
+**PR 6:** `render.yaml` validates; deploy smoke test on Render. Build loads
+`db/queue_schema.rb` after migrate; set `SOLID_QUEUE_IN_PUMA=true` so Puma runs Solid
+Queue workers (required for `deliver_later` on the free web tier). Do not run
+`db:seed` in production (dev-only admin user in seeds).
 
 ---
 
